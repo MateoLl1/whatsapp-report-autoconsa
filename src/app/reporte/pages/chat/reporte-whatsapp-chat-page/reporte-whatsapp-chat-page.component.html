@@ -1,7 +1,11 @@
 <div class="chat-layout">
   <header class="chat-header">
     <a class="volver" routerLink="/">←</a>
-    <div class="avatar"></div>
+
+    <div class="avatar-contacto">
+      {{ obtenerIniciales(nombre() || 'C') }}
+    </div>
+
     <div class="datos">
       <div class="nombre">{{ nombre() || 'Contacto' }}</div>
       <div class="numero">{{ numero() }}</div>
@@ -14,18 +18,19 @@
   <section class="chat-body">
     <div class="fondo"></div>
 
-    <div class="mensajes">
-      <div class="mensaje" *ngFor="let m of mensajes()" [class.error]="esError(m.rpw_estado)">
+    <div class="mensajes" #contenedorMensajes>
+      <div
+        class="mensaje"
+        *ngFor="let m of mensajes()"
+        [class.error]="esError(m.rpw_estado)"
+      >
         <div class="meta">
           <span class="plantilla">{{ m.rpw_nombre_plantilla }}</span>
           <span class="estado-pill">{{ m.rpw_estado }}</span>
         </div>
 
         <div class="texto">
-          <div *ngIf="m.rpw_mensaje && m.rpw_mensaje.trim().length > 0">{{ m.rpw_mensaje }}</div>
-          <div *ngIf="(!m.rpw_mensaje || m.rpw_mensaje.trim().length === 0) && m.rpw_variable_json">
-            {{ m.rpw_variable_json }}
-          </div>
+          {{ textoMensaje(m) }}
         </div>
 
         <div class="pie">
