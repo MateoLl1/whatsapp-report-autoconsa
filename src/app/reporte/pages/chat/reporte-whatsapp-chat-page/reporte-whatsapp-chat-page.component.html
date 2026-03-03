@@ -1,0 +1,42 @@
+<div class="chat-layout">
+  <header class="chat-header">
+    <a class="volver" routerLink="/">←</a>
+    <div class="avatar"></div>
+    <div class="datos">
+      <div class="nombre">{{ nombre() || 'Contacto' }}</div>
+      <div class="numero">{{ numero() }}</div>
+    </div>
+  </header>
+
+  <div class="estado" *ngIf="cargando()">Cargando…</div>
+  <div class="estado error" *ngIf="error()">{{ error() }}</div>
+
+  <section class="chat-body">
+    <div class="fondo"></div>
+
+    <div class="mensajes">
+      <div class="mensaje" *ngFor="let m of mensajes()" [class.error]="esError(m.rpw_estado)">
+        <div class="meta">
+          <span class="plantilla">{{ m.rpw_nombre_plantilla }}</span>
+          <span class="estado-pill">{{ m.rpw_estado }}</span>
+        </div>
+
+        <div class="texto">
+          <div *ngIf="m.rpw_mensaje && m.rpw_mensaje.trim().length > 0">{{ m.rpw_mensaje }}</div>
+          <div *ngIf="(!m.rpw_mensaje || m.rpw_mensaje.trim().length === 0) && m.rpw_variable_json">
+            {{ m.rpw_variable_json }}
+          </div>
+        </div>
+
+        <div class="pie">
+          <span>{{ formatearFecha(m.rpw_fecha) }}</span>
+          <span>{{ m.rpw_hora }}</span>
+        </div>
+      </div>
+
+      <div class="vacio" *ngIf="!cargando() && mensajes().length === 0">
+        Sin mensajes para este número
+      </div>
+    </div>
+  </section>
+</div>

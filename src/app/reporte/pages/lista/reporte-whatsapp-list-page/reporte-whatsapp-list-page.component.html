@@ -1,0 +1,58 @@
+<div class="whatsapp-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="perfil">
+        <div class="avatar"></div>
+        <div class="titulo">WhatsApp Report</div>
+      </div>
+    </div>
+
+    <div class="buscador">
+      <input
+        type="text"
+        placeholder="Buscar por nombre o número"
+        [ngModel]="busqueda()"
+        (ngModelChange)="busqueda.set($event)"
+        (keyup.enter)="cargarConversaciones()"
+      />
+      <button class="btn" (click)="cargarConversaciones()">Buscar</button>
+    </div>
+
+    <div class="estado" *ngIf="cargando()">Cargando…</div>
+    <div class="estado error" *ngIf="error()">{{ error() }}</div>
+
+    <div class="lista">
+      <a
+        class="item"
+        *ngFor="let c of conversaciones()"
+        [routerLink]="['/chat', c.numero]"
+        (click)="seleccionar(c)"
+        [class.activo]="conversacionSeleccionada()?.numero === c.numero"
+      >
+        <div class="avatar small"></div>
+        <div class="info">
+          <div class="fila">
+            <div class="nombre">{{ c.nombre }}</div>
+            <div class="hora">{{ c.ultimaHora }}</div>
+          </div>
+          <div class="fila">
+            <div class="mensaje">{{ recortar(c.ultimoMensaje) }}</div>
+            <div class="fecha">{{ formatearFecha(c.ultimaFecha) }}</div>
+          </div>
+        </div>
+      </a>
+
+      <div class="vacio" *ngIf="!cargando() && conversaciones().length === 0">
+        Sin conversaciones
+      </div>
+    </div>
+  </aside>
+
+  <main class="panel">
+    <div class="panel-vacio">
+      <div class="icono"></div>
+      <h2>Selecciona un chat</h2>
+      <p>Elige una conversación en el panel izquierdo para verla.</p>
+    </div>
+  </main>
+</div>
