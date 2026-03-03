@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { Subscription } from 'rxjs'
+import { Subscription, distinctUntilChanged, map } from 'rxjs'
 import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service'
 import { ReportePlantillaWhatsapp } from '../../../interfaces/reporte-plantilla-whatsapp.interface'
 
@@ -29,9 +29,17 @@ export class ReporteWhatsappChatPageComponent implements AfterViewInit, OnDestro
     private readonly route: ActivatedRoute,
     private readonly api: ReportesWhatsappApiService
   ) {
-    const n = this.route.snapshot.paramMap.get('numero') ?? ''
-    this.numero.set(n)
-    this.cargar()
+    this.subs.add(
+      this.route.paramMap
+        .pipe(
+          map((p) => p.get('numero') ?? ''),
+          distinctUntilChanged()
+        )
+        .subscribe((n) => {
+          this.numero.set(n)
+          this.cargar()
+        })
+    )
   }
 
   ngAfterViewInit() {
@@ -44,10 +52,15 @@ export class ReporteWhatsappChatPageComponent implements AfterViewInit, OnDestro
   }
 
   cargar() {
+    const n = this.numero().trim()
+    if (!n) return
+
     this.cargando.set(true)
     this.error.set(null)
+    this.mensajes.set([])
+    this.nombre.set('')
 
-    const sub = this.api.obtenerChat(this.numero()).subscribe({
+    const sub = this.api.obtenerChat(n).subscribe({
       next: (r) => {
         const ordenados = [...r].sort((a, b) => {
           const ta = `${a.rpw_fecha} ${a.rpw_hora}`

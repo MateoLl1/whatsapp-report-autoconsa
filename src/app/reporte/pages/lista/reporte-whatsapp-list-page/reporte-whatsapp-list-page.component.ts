@@ -1,22 +1,15 @@
 import { Component, OnDestroy, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { RouterModule } from '@angular/router'
+import { Router, RouterModule } from '@angular/router'
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs'
 import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service'
 import { ReportePlantillaWhatsapp } from '../../../interfaces/reporte-plantilla-whatsapp.interface'
+import { Conversacion } from '../../../interfaces/conversacion.interfaces'
 
-type Conversacion = {
-  numero: string
-  nombre: string
-  ultimoMensaje: string
-  ultimaFecha: string
-  ultimaHora: string
-  estado: string
-  plantilla: string
-}
+
 
 @Component({
   selector: 'app-reporte-whatsapp-list-page',
@@ -39,7 +32,10 @@ export class ReporteWhatsappListPageComponent implements OnDestroy {
   private cambiosBusqueda$ = new Subject<string>()
   private subs = new Subscription()
 
-  constructor(private readonly api: ReportesWhatsappApiService) {
+  constructor(
+    private readonly api: ReportesWhatsappApiService,
+    private readonly router: Router
+  ) {
     this.subs.add(
       this.cambiosBusqueda$
         .pipe(debounceTime(250), distinctUntilChanged())
@@ -67,6 +63,11 @@ export class ReporteWhatsappListPageComponent implements OnDestroy {
 
   buscarManual() {
     this.cargarConversaciones(this.busqueda().trim())
+  }
+
+  abrirChat(numero: string) {
+    console.log('Navegando a:', ['/', 'chat', numero])
+    this.router.navigate(['/', 'chat', numero])
   }
 
   cargarConversaciones(texto: string) {
