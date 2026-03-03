@@ -1,10 +1,12 @@
-import { Component, signal } from '@angular/core'
+import { Component, OnDestroy, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'
+import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs'
 import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service'
 import { ReportePlantillaWhatsapp } from '../../../interfaces/reporte-plantilla-whatsapp.interface'
-
 
 type Conversacion = {
   numero: string
@@ -19,11 +21,13 @@ type Conversacion = {
 @Component({
   selector: 'app-reporte-whatsapp-list-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, FontAwesomeModule],
   templateUrl: './reporte-whatsapp-list-page.component.html',
   styleUrl: './reporte-whatsapp-list-page.component.css'
 })
-export class ReporteWhatsappListPageComponent {
+export class ReporteWhatsappListPageComponent implements OnDestroy {
+
+  iconoWhatsapp = faWhatsapp
 
   cargando = signal(false)
   error = signal<string | null>(null)
@@ -32,21 +36,53 @@ export class ReporteWhatsappListPageComponent {
   conversaciones = signal<Conversacion[]>([])
   conversacionSeleccionada = signal<Conversacion | null>(null)
 
+  private cambiosBusqueda$ = new Subject<string>()
+  private subs = new Subscription()
+
   constructor(private readonly api: ReportesWhatsappApiService) {
-    this.cargarConversaciones()
+    this.subs.add(
+      this.cambiosBusqueda$
+        .pipe(debounceTime(250), distinctUntilChanged())
+        .subscribe((valor) => {
+          const texto = valor.trim()
+          if (texto.length === 0) {
+            this.cargarConversaciones('')
+            return
+          }
+          this.cargarConversaciones(texto)
+        })
+    )
+
+    this.cargarConversaciones('')
   }
 
-  cargarConversaciones() {
+  ngOnDestroy() {
+    this.subs.unsubscribe()
+  }
+
+  onCambioBusqueda(valor: string) {
+    this.busqueda.set(valor)
+    this.cambiosBusqueda$.next(valor)
+  }
+
+  buscarManual() {
+    this.cargarConversaciones(this.busqueda().trim())
+  }
+
+  cargarConversaciones(texto: string) {
     this.cargando.set(true)
     this.error.set(null)
 
-    this.api.consultar({
-      busqueda: this.busqueda().trim() || undefined,
+    const filtros: any = {
       pagina: 1,
       limite: 200,
       ordenar_por: 'RPW_FECHA',
       orden: 'DESC'
-    }).subscribe({
+    }
+
+    if (texto.length > 0) filtros.busqueda = texto
+
+    this.api.consultar(filtros).subscribe({
       next: (r) => {
         const convers = this.construirConversaciones(r.datos)
         this.conversaciones.set(convers)
@@ -113,5 +149,12 @@ export class ReporteWhatsappListPageComponent {
     const t = (texto ?? '').replace(/\s+/g, ' ').trim()
     if (t.length <= max) return t
     return t.slice(0, max) + '…'
+  }
+
+  obtenerIniciales(nombre: string) {
+    const partes = (nombre ?? '').trim().split(/\s+/).filter(Boolean)
+    const a = partes[0]?.[0] ?? ''
+    const b = partes.length > 1 ? (partes[1]?.[0] ?? '') : (partes[0]?.[1] ?? '')
+    return (a + b).toUpperCase()
   }
 }

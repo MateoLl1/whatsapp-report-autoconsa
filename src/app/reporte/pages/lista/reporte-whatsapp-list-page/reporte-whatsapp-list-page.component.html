@@ -2,7 +2,9 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="perfil">
-        <div class="avatar"></div>
+        <div class="app-icono">
+          <fa-icon [icon]="iconoWhatsapp"></fa-icon>
+        </div>
         <div class="titulo">WhatsApp Report</div>
       </div>
     </div>
@@ -12,10 +14,10 @@
         type="text"
         placeholder="Buscar por nombre o número"
         [ngModel]="busqueda()"
-        (ngModelChange)="busqueda.set($event)"
-        (keyup.enter)="cargarConversaciones()"
+        (ngModelChange)="onCambioBusqueda($event)"
+        (keyup.enter)="buscarManual()"
       />
-      <button class="btn" (click)="cargarConversaciones()">Buscar</button>
+      <button class="btn" (click)="buscarManual()">Buscar</button>
     </div>
 
     <div class="estado" *ngIf="cargando()">Cargando…</div>
@@ -29,7 +31,10 @@
         (click)="seleccionar(c)"
         [class.activo]="conversacionSeleccionada()?.numero === c.numero"
       >
-        <div class="avatar small"></div>
+        <div class="avatar-contacto">
+          {{ obtenerIniciales(c.nombre) }}
+        </div>
+
         <div class="info">
           <div class="fila">
             <div class="nombre">{{ c.nombre }}</div>
