@@ -1,6 +1,37 @@
 
 
 *{
- padding: 0; 
+ padding: 0;
  margin: 0;
 }
+
+
+
+:root[data-tema="oscuro"] {
+  --fondo: #0b141a;
+  --header: #202c33;
+  --texto: #e9edef;
+  --muted: #8696a0;
+  --burbuja: #005c4b;
+  --burbuja-error: #3b1f22;
+  --panel: #202c33;
+  --borde: rgba(255,255,255,.06);
+}
+
+:root[data-tema="claro"] {
+  --fondo: #f0f2f5;
+  --header: #ffffff;
+  --texto: #111b21;
+  --muted: #54656f;
+  --burbuja: #d9fdd3;
+  --burbuja-error: #ffe5e5;
+  --panel: #ffffff;
+  --borde: rgba(17,27,33,.12);
+}
+
+body {
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+

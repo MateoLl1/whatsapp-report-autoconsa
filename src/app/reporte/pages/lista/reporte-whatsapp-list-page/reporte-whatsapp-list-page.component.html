@@ -4,6 +4,10 @@
       <fa-icon [icon]="iconoWhatsapp"></fa-icon>
     </div>
     <div class="titulo">WhatsApp Report</div>
+    <button class="btn-tema" type="button" (click)="alternarTema()" [title]="tema() === 'oscuro' ? 'Modo claro' : 'Modo oscuro'">
+    <span *ngIf="tema() === 'oscuro'">🌙</span>
+    <span *ngIf="tema() === 'claro'">☀️</span>
+  </button>
   </div>
 </div>
 

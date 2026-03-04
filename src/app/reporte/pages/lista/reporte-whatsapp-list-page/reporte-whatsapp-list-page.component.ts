@@ -1,4 +1,4 @@
-import { Component, OnDestroy, signal } from '@angular/core'
+import { Component, inject, OnDestroy, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { Router, RouterModule } from '@angular/router'
@@ -8,6 +8,7 @@ import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs'
 import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service'
 import { ReportePlantillaWhatsapp } from '../../../interfaces/reporte-plantilla-whatsapp.interface'
 import { Conversacion } from '../../../interfaces/conversacion.interface'
+import { ServicioTema } from '../../../../core/services/tema.service'
 
 
 
@@ -19,6 +20,8 @@ import { Conversacion } from '../../../interfaces/conversacion.interface'
   styleUrl: './reporte-whatsapp-list-page.component.css'
 })
 export class ReporteWhatsappListPageComponent implements OnDestroy {
+  private readonly temaServicio = inject(ServicioTema);
+
 
   iconoWhatsapp = faWhatsapp
 
@@ -29,12 +32,15 @@ export class ReporteWhatsappListPageComponent implements OnDestroy {
   conversaciones = signal<Conversacion[]>([])
   conversacionSeleccionada = signal<Conversacion | null>(null)
 
+  tema = this.temaServicio.tema;
+
+
   private cambiosBusqueda$ = new Subject<string>()
   private subs = new Subscription()
 
   constructor(
     private readonly api: ReportesWhatsappApiService,
-    private readonly router: Router
+    private readonly router: Router,
   ) {
     this.subs.add(
       this.cambiosBusqueda$
@@ -157,4 +163,10 @@ export class ReporteWhatsappListPageComponent implements OnDestroy {
     const b = partes.length > 1 ? (partes[1]?.[0] ?? '') : (partes[0]?.[1] ?? '')
     return (a + b).toUpperCase()
   }
+
+  alternarTema() {
+    this.temaServicio.alternar();
+  }
+
+
 }

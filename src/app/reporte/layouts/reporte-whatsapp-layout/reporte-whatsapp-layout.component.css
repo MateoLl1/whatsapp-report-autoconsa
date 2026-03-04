@@ -2,18 +2,18 @@
   height: 100vh;
   display: grid;
   grid-template-columns: 380px 1fr;
-  background: #0b141a;
-  color: #e9edef;
+  background: var(--fondo);
+  color: var(--texto);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
 .sidebar {
-  background: #111b21;
-  border-right: 1px solid #202c33;
+  background: var(--panel);
+  border-right: 1px solid var(--borde);
   overflow: hidden;
 }
 
 .panel {
-  background: #0b141a;
+  background: var(--fondo);
   overflow: hidden;
 }
