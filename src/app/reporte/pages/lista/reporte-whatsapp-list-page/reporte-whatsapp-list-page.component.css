@@ -36,25 +36,48 @@
 }
 
 .buscador input {
-  height: 36px;
-  border-radius: 8px;
+  height: 38px;
+  border-radius: 10px;
   border: 1px solid var(--input-borde);
-  background: var(--input);
-  color: var(--texto);
+  background: var(--input-fondo);
+  color: var(--input-texto);
   padding: 0 12px;
   outline: none;
   min-width: 0;
 }
 
+.buscador input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.buscador input:focus {
+  box-shadow: var(--focus);
+  border-color: rgba(0,168,132,.55);
+}
+
 .btn {
-  height: 36px;
-  padding: 0 12px;
+  height: 38px;
+  padding: 0 14px;
   border: 0;
-  border-radius: 8px;
-  background: var(--marca);
-  color: var(--marca-texto);
-  font-weight: 600;
+  border-radius: 10px;
+  background: var(--btn-primario-fondo);
+  color: var(--btn-primario-texto);
+  font-weight: 700;
   cursor: pointer;
+  transition: background .12s ease, transform .12s ease, filter .12s ease;
+}
+
+.btn:hover {
+  background: var(--btn-primario-hover);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
 }
 
 .estado {
@@ -173,18 +196,28 @@
 }
 
 .btn-tema {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
-  border: 1px solid var(--borde);
+  border: 1px solid var(--btn-ghost-borde);
   background: transparent;
   color: var(--texto);
   cursor: pointer;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
+  transition: background .12s ease, border-color .12s ease, transform .12s ease;
 }
 
 .btn-tema:hover {
-  background: var(--hover);
+  background: var(--btn-ghost-hover);
+}
+
+.btn-tema:active {
+  transform: translateY(1px);
+}
+
+.btn-tema:focus-visible {
+  box-shadow: var(--focus);
+  outline: none;
 }

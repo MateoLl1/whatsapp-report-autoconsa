@@ -110,21 +110,16 @@
   width: 22px;
   height: 22px;
   border-radius: 999px;
-  border: none;
+  border: 1px solid var(--btn-ghost-borde);
   cursor: pointer;
-  background: rgba(0,0,0,.22);
-  color: rgba(233,237,239,.9);
+  background: var(--btn-ghost-hover);
+  color: var(--texto);
   display: grid;
   place-items: center;
   font-size: 13px;
   opacity: 0;
   transform: translateY(-2px);
-  transition: opacity .12s ease, transform .12s ease;
-}
-
-:root[data-tema="claro"] .btn-info {
-  background: rgba(17,27,33,.10);
-  color: rgba(17,27,33,.80);
+  transition: opacity .12s ease, transform .12s ease, background .12s ease;
 }
 
 .mensaje:hover .btn-info {
@@ -133,11 +128,11 @@
 }
 
 .btn-info:hover {
-  background: rgba(0,0,0,.32);
+  background: rgba(0,0,0,.22);
 }
 
 :root[data-tema="claro"] .btn-info:hover {
-  background: rgba(17,27,33,.16);
+  background: rgba(17,27,33,.12);
 }
 
 .texto {
@@ -206,20 +201,26 @@
 
 .btn-cerrar {
   background: transparent;
-  border: none;
-  color: rgba(233,237,239,.8);
+  border: 1px solid var(--btn-ghost-borde);
+  color: var(--texto);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   padding: 6px 10px;
-  border-radius: 8px;
-}
-
-:root[data-tema="claro"] .btn-cerrar {
-  color: rgba(17,27,33,.75);
+  border-radius: 10px;
+  transition: background .12s ease, transform .12s ease;
 }
 
 .btn-cerrar:hover {
-  background: var(--hover);
+  background: var(--btn-ghost-hover);
+}
+
+.btn-cerrar:active {
+  transform: translateY(1px);
+}
+
+.btn-cerrar:focus-visible {
+  box-shadow: var(--focus);
+  outline: none;
 }
 
 .modal-grid {
@@ -291,14 +292,25 @@
 }
 
 .btn-primario {
-  background: var(--marca);
+  background: var(--btn-primario-fondo);
   border: none;
   padding: 8px 14px;
   border-radius: 10px;
-  color: var(--marca-texto);
+  color: var(--btn-primario-texto);
   cursor: pointer;
+  font-weight: 700;
+  transition: background .12s ease, transform .12s ease;
 }
 
 .btn-primario:hover {
-  filter: brightness(1.05);
+  background: var(--btn-primario-hover);
+}
+
+.btn-primario:active {
+  transform: translateY(1px);
+}
+
+.btn-primario:focus-visible {
+  box-shadow: var(--focus);
+  outline: none;
 }

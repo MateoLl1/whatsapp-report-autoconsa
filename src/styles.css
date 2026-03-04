@@ -1,21 +1,36 @@
-
-
-*{
- padding: 0;
- margin: 0;
-}
-
-
-
 :root[data-tema="oscuro"] {
   --fondo: #0b141a;
   --header: #202c33;
   --texto: #e9edef;
   --muted: #8696a0;
+  --panel: #111b21;
+  --panel-2: #202c33;
+  --borde: #202c33;
+  --hover: rgba(255,255,255,.06);
+  --activo: #2a3942;
+  --avatar: #2a3942;
+  --marca: #00a884;
+  --marca-texto: #062e2a;
+
+  --input-fondo: #202c33;
+  --input-borde: #2a3942;
+  --input-texto: #e9edef;
+  --input-placeholder: rgba(233,237,239,.55);
+
+  --btn-primario-fondo: #00a884;
+  --btn-primario-texto: #062e2a;
+  --btn-primario-hover: #12b392;
+
+  --btn-ghost-fondo: transparent;
+  --btn-ghost-borde: rgba(233,237,239,.10);
+  --btn-ghost-hover: rgba(255,255,255,.08);
+
+  --focus: 0 0 0 3px rgba(0,168,132,.28);
+
   --burbuja: #005c4b;
   --burbuja-error: #3b1f22;
-  --panel: #202c33;
-  --borde: rgba(255,255,255,.06);
+
+
 }
 
 :root[data-tema="claro"] {
@@ -23,10 +38,33 @@
   --header: #ffffff;
   --texto: #111b21;
   --muted: #54656f;
+  --panel: #ffffff;
+  --panel-2: #ffffff;
+  --borde: rgba(17,27,33,.12);
+  --hover: rgba(17,27,33,.06);
+  --activo: rgba(17,27,33,.10);
+  --avatar: rgba(17,27,33,.10);
+  --marca: #00a884;
+  --marca-texto: #062e2a;
+
+  --input-fondo: #ffffff;
+  --input-borde: rgba(17,27,33,.18);
+  --input-texto: #111b21;
+  --input-placeholder: rgba(17,27,33,.55);
+
+  --btn-primario-fondo: #00a884;
+  --btn-primario-texto: #062e2a;
+  --btn-primario-hover: #12b392;
+
+  --btn-ghost-fondo: transparent;
+  --btn-ghost-borde: rgba(17,27,33,.18);
+  --btn-ghost-hover: rgba(17,27,33,.08);
+
+  --focus: 0 0 0 3px rgba(0,168,132,.20);
+
+
   --burbuja: #d9fdd3;
   --burbuja-error: #ffe5e5;
-  --panel: #ffffff;
-  --borde: rgba(17,27,33,.12);
 }
 
 body {
@@ -35,3 +73,30 @@ body {
 }
 
 
+
+
+input[type="text"], input[type="search"], textarea, select {
+  color: var(--input-texto);
+  background: var(--input-fondo);
+  border: 1px solid var(--input-borde);
+  border-radius: 10px;
+  outline: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+input:focus, textarea:focus, select:focus {
+  box-shadow: var(--focus);
+  border-color: rgba(0,168,132,.55);
+}
+
+button {
+  font: inherit;
+}
+
+button:focus-visible {
+  box-shadow: var(--focus);
+  outline: none;
+}
