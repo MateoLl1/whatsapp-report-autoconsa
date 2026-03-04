@@ -9,7 +9,7 @@ import { environment } from '../environments/environment'
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes, withDebugTracing()),
+    provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     { provide: API_BASE_URL, useValue: environment.apiBaseUrl },
     { provide: HTTP_INTERCEPTORS, useClass: ApiInterceptor, multi: true }

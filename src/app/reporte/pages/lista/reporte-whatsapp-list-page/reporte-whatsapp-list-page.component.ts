@@ -7,7 +7,7 @@ import { faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs'
 import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service'
 import { ReportePlantillaWhatsapp } from '../../../interfaces/reporte-plantilla-whatsapp.interface'
-import { Conversacion } from '../../../interfaces/conversacion.interfaces'
+import { Conversacion } from '../../../interfaces/conversacion.interface'
 
 
 
@@ -66,7 +66,6 @@ export class ReporteWhatsappListPageComponent implements OnDestroy {
   }
 
   abrirChat(numero: string) {
-    console.log('Navegando a:', ['/', 'chat', numero])
     this.router.navigate(['/', 'chat', numero])
   }
 

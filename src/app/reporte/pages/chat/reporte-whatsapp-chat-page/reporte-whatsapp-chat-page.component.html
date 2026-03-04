@@ -1,6 +1,5 @@
 <div class="chat-layout">
   <header class="chat-header">
-
     <div class="avatar-contacto">
       {{ obtenerIniciales(nombre() || 'C') }}
     </div>
@@ -12,6 +11,7 @@
   </header>
 
   <div class="estado" *ngIf="cargando()">Cargando…</div>
+  <div class="estado" *ngIf="cargandoPlantillas() && !cargando()">Cargando plantillas…</div>
   <div class="estado error" *ngIf="error()">{{ error() }}</div>
 
   <section class="chat-body">
@@ -31,6 +31,7 @@
         <div class="texto">
           {{ textoMensaje(m) }}
         </div>
+
 
         <div class="pie">
           <span>{{ formatearFecha(m.rpw_fecha) }}</span>

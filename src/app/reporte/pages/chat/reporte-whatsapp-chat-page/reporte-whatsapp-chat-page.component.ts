@@ -1,9 +1,12 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ActivatedRoute, RouterModule } from '@angular/router'
-import { Subscription, distinctUntilChanged, map } from 'rxjs'
+import { Subscription, distinctUntilChanged, map, forkJoin, of, catchError } from 'rxjs'
 import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service'
 import { ReportePlantillaWhatsapp } from '../../../interfaces/reporte-plantilla-whatsapp.interface'
+import { PlantillaCallbell } from '../../../interfaces/plantillas-callbell.interface'
+import { ServicioPlantillasCallbell } from '../../../../core/services/plantillas-callbell.service'
+
 
 @Component({
   selector: 'app-reporte-whatsapp-chat-page',
@@ -17,8 +20,10 @@ export class ReporteWhatsappChatPageComponent implements AfterViewInit, OnDestro
   numero = signal('')
   nombre = signal('')
   cargando = signal(false)
+  cargandoPlantillas = signal(false)
   error = signal<string | null>(null)
   mensajes = signal<ReportePlantillaWhatsapp[]>([])
+  plantillasPorUuid = signal<Record<string, PlantillaCallbell>>({})
 
   @ViewChild('contenedorMensajes') contenedorMensajes?: ElementRef<HTMLDivElement>
 
@@ -27,7 +32,8 @@ export class ReporteWhatsappChatPageComponent implements AfterViewInit, OnDestro
 
   constructor(
     private readonly route: ActivatedRoute,
-    private readonly api: ReportesWhatsappApiService
+    private readonly api: ReportesWhatsappApiService,
+    private readonly plantillasCallbell: ServicioPlantillasCallbell
   ) {
     this.subs.add(
       this.route.paramMap
@@ -59,6 +65,7 @@ export class ReporteWhatsappChatPageComponent implements AfterViewInit, OnDestro
     this.error.set(null)
     this.mensajes.set([])
     this.nombre.set('')
+    this.plantillasPorUuid.set({})
 
     const sub = this.api.obtenerChat(n).subscribe({
       next: (r) => {
@@ -72,12 +79,58 @@ export class ReporteWhatsappChatPageComponent implements AfterViewInit, OnDestro
         this.nombre.set(ordenados[0]?.rpw_nombre ?? '')
         this.cargando.set(false)
 
+        this.cargarPlantillasDeMensajes(ordenados)
+
         queueMicrotask(() => this.bajarAlFinal())
         setTimeout(() => this.bajarAlFinal(), 0)
       },
       error: (e) => {
         this.error.set(e?.error?.message ?? 'No se pudo cargar el chat')
         this.cargando.set(false)
+      }
+    })
+
+    this.subs.add(sub)
+  }
+
+  cargarPlantillasDeMensajes(mensajes: ReportePlantillaWhatsapp[]) {
+    const existentes = this.plantillasPorUuid()
+    const uuids = Array.from(
+      new Set(
+        mensajes
+          .map((m) => (m.rpw_uuid ?? '').trim())
+          .filter((u) => u.length > 0)
+      )
+    ).filter((u) => !existentes[u])
+
+    if (uuids.length === 0) return
+
+    this.cargandoPlantillas.set(true)
+
+
+
+    const solicitudes = uuids.map((uuid) =>
+      this.plantillasCallbell.obtenerPlantillaPorUuid(uuid).pipe(
+        map((r) => ({ uuid, plantilla: r.template })),
+        catchError(() => of({ uuid, plantilla: null as unknown as PlantillaCallbell }))
+      )
+    )
+
+    const sub = forkJoin(solicitudes).subscribe({
+      next: (resultados) => {
+        const actualizado: Record<string, PlantillaCallbell> = { ...this.plantillasPorUuid() }
+
+        for (const r of resultados) {
+          if (r?.plantilla?.uuid) {
+            actualizado[r.uuid] = r.plantilla
+          }
+        }
+
+        this.plantillasPorUuid.set(actualizado)
+        this.cargandoPlantillas.set(false)
+      },
+      error: () => {
+        this.cargandoPlantillas.set(false)
       }
     })
 
@@ -110,6 +163,47 @@ export class ReporteWhatsappChatPageComponent implements AfterViewInit, OnDestro
   textoMensaje(m: ReportePlantillaWhatsapp) {
     const msg = (m.rpw_mensaje ?? '').trim()
     if (msg.length > 0) return msg
+
+    const uuid = (m.rpw_uuid ?? '').trim()
+    const plantilla = uuid ? this.plantillasPorUuid()[uuid] : undefined
+    const textoPlantilla = (plantilla?.text ?? '').trim()
+
+    if (textoPlantilla.length > 0) {
+      const variables = this.leerVariablesDesdeJson(m.rpw_variable_json)
+      return this.aplicarVariablesAPlantilla(textoPlantilla, variables)
+    }
+
     return (m.rpw_variable_json ?? '').trim()
+  }
+
+  leerVariablesDesdeJson(valor: string): string[] {
+    const crudo = (valor ?? '').trim()
+    if (!crudo) return []
+
+    try {
+      const json = JSON.parse(crudo) as unknown
+      if (Array.isArray(json)) return json.map((v) => String(v ?? ''))
+      return []
+    } catch {
+      return []
+    }
+  }
+
+  aplicarVariablesAPlantilla(texto: string, variables: string[]): string {
+    let resultado = texto
+
+    for (let i = 0; i < variables.length; i++) {
+      const indice = i + 1
+      const patron = new RegExp(`\\{\\{\\s*${indice}\\s*\\}\\}`, 'g')
+      resultado = resultado.replace(patron, variables[i] ?? '')
+    }
+
+    return resultado
+  }
+
+  tienePlantillaCargada(uuid: string) {
+    const u = (uuid ?? '').trim()
+    if (!u) return false
+    return !!this.plantillasPorUuid()[u]
   }
 }
