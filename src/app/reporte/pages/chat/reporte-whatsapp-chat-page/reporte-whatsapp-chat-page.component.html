@@ -5,7 +5,7 @@
     </div>
 
     <div class="datos">
-      <div class="nombre">{{ nombre() || 'Contacto' }}</div>
+      <div class="nombre" [title]="nombre() || 'Contacto'">{{ nombre() || 'Contacto' }}</div>
       <div class="numero">{{ numero() }}</div>
     </div>
   </header>
@@ -23,18 +23,15 @@
         *ngFor="let m of mensajes()"
         [class.error]="esError(m.rpw_estado)"
       >
-        <div class="meta">
-          <span class="plantilla">{{ m.rpw_nombre_plantilla }}</span>
-          <span class="estado-pill">{{ m.rpw_estado }}</span>
-        </div>
+        <button class="btn-info" type="button" (click)="abrirInfo(m)" aria-label="Ver detalle">
+          ℹ
+        </button>
 
         <div class="texto">
           {{ textoMensaje(m) }}
         </div>
 
-
         <div class="pie">
-          <span>{{ formatearFecha(m.rpw_fecha) }}</span>
           <span>{{ m.rpw_hora }}</span>
         </div>
       </div>
@@ -44,4 +41,74 @@
       </div>
     </div>
   </section>
+
+  <div class="overlay" *ngIf="mensajeInfo()" (click)="cerrarInfo()">
+    <div class="modal-info" (click)="$event.stopPropagation()">
+      <div class="modal-titulo">
+        <div class="modal-h1">Detalle del mensaje</div>
+        <button class="btn-cerrar" type="button" (click)="cerrarInfo()">✕</button>
+      </div>
+
+      <div class="modal-grid">
+        <div class="fila">
+          <div class="etiqueta">Contacto</div>
+          <div class="valor">{{ mensajeInfo()?.rpw_nombre }}</div>
+        </div>
+
+        <div class="fila">
+          <div class="etiqueta">Número</div>
+          <div class="valor">{{ mensajeInfo()?.rpw_numero }}</div>
+        </div>
+
+        <div class="fila">
+          <div class="etiqueta">Fecha</div>
+          <div class="valor">{{ formatearFecha(mensajeInfo()?.rpw_fecha || '') }} {{ mensajeInfo()?.rpw_hora }}</div>
+        </div>
+
+        <div class="fila">
+          <div class="etiqueta">Estado</div>
+          <div class="valor">
+            <span class="chip" [class.chip-error]="esError(mensajeInfo()?.rpw_estado || '')">
+              {{ mensajeInfo()?.rpw_estado }}
+            </span>
+          </div>
+        </div>
+
+        <div class="fila">
+          <div class="etiqueta">Plantilla</div>
+          <div class="valor">{{ mensajeInfo()?.rpw_nombre_plantilla }}</div>
+        </div>
+
+        <div class="fila">
+          <div class="etiqueta">UUID</div>
+          <div class="valor mono">{{ mensajeInfo()?.rpw_uuid }}</div>
+        </div>
+
+        <div class="fila" *ngIf="plantillaDeMensaje(mensajeInfo()!)">
+          <div class="etiqueta">Contenido plantilla</div>
+          <div class="valor">
+            <pre class="bloque">{{ plantillaDeMensaje(mensajeInfo()!)?.text }}</pre>
+          </div>
+        </div>
+
+        <div class="fila" *ngIf="(mensajeInfo()?.rpw_variable_json || '').trim().length > 0">
+          <div class="etiqueta">Variables</div>
+          <div class="valor">
+            <pre class="bloque">{{ mensajeInfo()?.rpw_variable_json }}</pre>
+          </div>
+        </div>
+
+        <div class="fila" *ngIf="(mensajeInfo()?.rpw_mensaje || '').trim().length > 0">
+          <div class="etiqueta">Mensaje técnico</div>
+          <div class="valor">
+            <pre class="bloque error-tecnico">{{ mensajeInfo()?.rpw_mensaje }}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-acciones">
+        <button type="button" class="btn-primario" (click)="cerrarInfo()">Cerrar</button>
+      </div>
+    </div>
+  </div>
 </div>
