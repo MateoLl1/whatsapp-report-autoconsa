@@ -3,23 +3,73 @@
     <div class="app-icono">
       <fa-icon [icon]="iconoWhatsapp"></fa-icon>
     </div>
+
     <div class="titulo">WhatsApp Report</div>
-    <button class="btn-tema" type="button" (click)="alternarTema()" [title]="tema() === 'oscuro' ? 'Modo claro' : 'Modo oscuro'">
-    <span *ngIf="tema() === 'oscuro'">🌙</span>
-    <span *ngIf="tema() === 'claro'">☀️</span>
-  </button>
+
+    <button
+      class="btn-icono"
+      type="button"
+      (click)="alternarTema()"
+      [title]="tema() === 'oscuro' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+    >
+      <span *ngIf="tema() === 'oscuro'">☀️</span>
+      <span *ngIf="tema() === 'claro'">🌙</span>
+    </button>
   </div>
 </div>
 
-<div class="buscador">
-  <input
-    type="text"
-    placeholder="Buscar por nombre o número"
-    [ngModel]="busqueda()"
-    (ngModelChange)="onCambioBusqueda($event)"
-    (keyup.enter)="buscarManual()"
-  />
-  <button class="btn" (click)="buscarManual()">Buscar</button>
+<div class="buscador-wrap">
+  <div class="buscador-barra">
+    <div class="input-icono">🔎</div>
+    <input
+      type="text"
+      placeholder="Buscar por nombre o número"
+      [ngModel]="busqueda()"
+      (ngModelChange)="onCambioBusqueda($event)"
+      (keyup.enter)="aplicarFiltros()"
+    />
+    <button class="btn-icono" type="button" (click)="alternarFiltros()" title="Filtros">
+      ⚙️
+    </button>
+  </div>
+
+  <div class="filtros" *ngIf="filtrosAbiertos()">
+    <div class="filtros-grid">
+      <div class="campo">
+        <label>Desde</label>
+        <input
+          type="date"
+          [ngModel]="fechaDesde()"
+          (ngModelChange)="onCambioFechaDesde($event)"
+          [max]="obtenerMaxFechaDesde()"
+          [min]="obtenerMinFechaDesde()"
+        />
+      </div>
+
+      <div class="campo">
+        <label>Hasta</label>
+        <input
+          type="date"
+          [ngModel]="fechaHasta()"
+          (ngModelChange)="onCambioFechaHasta($event)"
+          [min]="obtenerMinFechaHasta()"
+          [max]="obtenerMaxFechaHasta()"
+        />
+      </div>
+
+      <div class="campo">
+        <label>Estado</label>
+        <select [ngModel]="estado()" (ngModelChange)="estado.set($event)">
+          <option *ngFor="let e of estadosDisponibles" [ngValue]="e.valor">{{ e.texto }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filtros-acciones">
+      <button class="btn-primario" type="button" (click)="aplicarFiltros()">Aplicar</button>
+      <button class="btn-secundario" type="button" (click)="limpiarFiltros()">Limpiar</button>
+    </div>
+  </div>
 </div>
 
 <div class="estado" *ngIf="cargando()">Cargando…</div>
@@ -41,14 +91,19 @@
         <div class="nombre">{{ c.nombre }}</div>
         <div class="hora">{{ c.ultimaHora }}</div>
       </div>
+
       <div class="fila">
-        <div class="mensaje">{{ recortar(c.ultimoMensaje) }}</div>
+        <div class="mensaje">{{ c.numero }}</div>
         <div class="fecha">{{ formatearFecha(c.ultimaFecha) }}</div>
       </div>
     </div>
   </div>
 
-  <div class="vacio" *ngIf="!cargando() && conversaciones().length === 0">
+  <div class="vacio" *ngIf="!cargando() && conversaciones().length === 0 && !tieneFiltrosAplicados()">
+    Ingresa un criterio de búsqueda para consultar conversaciones
+  </div>
+
+  <div class="vacio" *ngIf="!cargando() && conversaciones().length === 0 && tieneFiltrosAplicados()">
     Sin conversaciones
   </div>
 </div>

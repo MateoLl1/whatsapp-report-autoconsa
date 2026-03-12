@@ -16,10 +16,10 @@ import {
   of,
   catchError,
 } from 'rxjs';
-import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service';
 import { ReportePlantillaWhatsapp } from '../../../interfaces/reporte-plantilla-whatsapp.interface';
 import { PlantillaCallbell } from '../../../interfaces/plantillas-callbell.interface';
 import { ServicioPlantillasCallbell } from '../../../../core/services/plantillas-callbell.service';
+import { ReportesWhatsappApiService } from '../../../services/reportes-whatsapp-api.service';
 
 @Component({
   selector: 'app-reporte-whatsapp-chat-page',

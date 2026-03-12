@@ -1,17 +1,34 @@
 <div class="chat-layout">
   <header class="chat-header">
     <div class="avatar-contacto">
-      {{ obtenerIniciales(nombre() || 'C') }}
+      <!-- {{ obtenerIniciales(nombre() || "C") }} -->
+
+      <img src="/img/ac_logo.png" alt="AC" class="avatar-contacto-img" />
+
     </div>
 
-    <div class="datos">
-      <div class="nombre" [title]="nombre() || 'Contacto'">{{ nombre() || 'Contacto' }}</div>
+    <!--! NUMERO DEL CLIENTE -->
+    <!-- <div class="datos">
+      <div class="nombre" [title]="nombre() || 'Contacto'">
+        {{ nombre() || "Contacto" }}
+      </div>
       <div class="numero">{{ numero() }}</div>
+    </div> -->
+
+
+    <!-- NUMERO DE AUTOMOTORES -->
+    <div class="datos">
+      <div class="nombre" [title]="'AC'">
+        Automotores Continental Notificaciones
+      </div>
+      <div class="numero">593 98 451 0914</div>
     </div>
   </header>
 
   <div class="estado" *ngIf="cargando()">Cargando…</div>
-  <div class="estado" *ngIf="cargandoPlantillas() && !cargando()">Cargando plantillas…</div>
+  <div class="estado" *ngIf="cargandoPlantillas() && !cargando()">
+    Cargando plantillas…
+  </div>
   <div class="estado error" *ngIf="error()">{{ error() }}</div>
 
   <section class="chat-body">
@@ -23,7 +40,12 @@
         *ngFor="let m of mensajes()"
         [class.error]="esError(m.rpw_estado)"
       >
-        <button class="btn-info" type="button" (click)="abrirInfo(m)" aria-label="Ver detalle">
+        <button
+          class="btn-info"
+          type="button"
+          (click)="abrirInfo(m)"
+          aria-label="Ver detalle"
+        >
           ℹ
         </button>
 
@@ -32,9 +54,14 @@
         </div>
 
         <div class="pie">
+          <span>{{ formatearFecha(m.rpw_fecha) }}</span>
           <span>{{ m.rpw_hora }}</span>
         </div>
       </div>
+
+      <span style="height: 50px;"></span>
+      <span style="height: 50px;"></span>
+      <span style="height: 50px;"></span>
 
       <div class="vacio" *ngIf="!cargando() && mensajes().length === 0">
         Sin mensajes para este número
@@ -42,11 +69,15 @@
     </div>
   </section>
 
+  <!--! MODAL INFORMATIVO -->
+
   <div class="overlay" *ngIf="mensajeInfo()" (click)="cerrarInfo()">
     <div class="modal-info" (click)="$event.stopPropagation()">
       <div class="modal-titulo">
         <div class="modal-h1">Detalle del mensaje</div>
-        <button class="btn-cerrar" type="button" (click)="cerrarInfo()">✕</button>
+        <button class="btn-cerrar" type="button" (click)="cerrarInfo()">
+          ✕
+        </button>
       </div>
 
       <div class="modal-grid">
@@ -62,13 +93,19 @@
 
         <div class="fila">
           <div class="etiqueta">Fecha</div>
-          <div class="valor">{{ formatearFecha(mensajeInfo()?.rpw_fecha || '') }} {{ mensajeInfo()?.rpw_hora }}</div>
+          <div class="valor">
+            {{ formatearFecha(mensajeInfo()?.rpw_fecha || "") }}
+            {{ mensajeInfo()?.rpw_hora }}
+          </div>
         </div>
 
         <div class="fila">
           <div class="etiqueta">Estado</div>
           <div class="valor">
-            <span class="chip" [class.chip-error]="esError(mensajeInfo()?.rpw_estado || '')">
+            <span
+              class="chip"
+              [class.chip-error]="esError(mensajeInfo()?.rpw_estado || '')"
+            >
               {{ mensajeInfo()?.rpw_estado }}
             </span>
           </div>
@@ -87,27 +124,39 @@
         <div class="fila" *ngIf="plantillaDeMensaje(mensajeInfo()!)">
           <div class="etiqueta">Contenido plantilla</div>
           <div class="valor">
-            <pre class="bloque">{{ plantillaDeMensaje(mensajeInfo()!)?.text }}</pre>
+            <pre class="bloque">{{
+              plantillaDeMensaje(mensajeInfo()!)?.text
+            }}</pre>
           </div>
         </div>
 
-        <div class="fila" *ngIf="(mensajeInfo()?.rpw_variable_json || '').trim().length > 0">
+        <div
+          class="fila"
+          *ngIf="(mensajeInfo()?.rpw_variable_json || '').trim().length > 0"
+        >
           <div class="etiqueta">Variables</div>
           <div class="valor">
             <pre class="bloque">{{ mensajeInfo()?.rpw_variable_json }}</pre>
           </div>
         </div>
 
-        <div class="fila" *ngIf="(mensajeInfo()?.rpw_mensaje || '').trim().length > 0">
+        <div
+          class="fila"
+          *ngIf="(mensajeInfo()?.rpw_mensaje || '').trim().length > 0"
+        >
           <div class="etiqueta">Mensaje técnico</div>
           <div class="valor">
-            <pre class="bloque error-tecnico">{{ mensajeInfo()?.rpw_mensaje }}</pre>
+            <pre class="bloque error-tecnico">{{
+              mensajeInfo()?.rpw_mensaje
+            }}</pre>
           </div>
         </div>
       </div>
 
       <div class="modal-acciones">
-        <button type="button" class="btn-primario" (click)="cerrarInfo()">Cerrar</button>
+        <button type="button" class="btn-primario" (click)="cerrarInfo()">
+          Cerrar
+        </button>
       </div>
     </div>
   </div>

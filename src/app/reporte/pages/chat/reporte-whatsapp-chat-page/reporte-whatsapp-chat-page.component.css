@@ -314,3 +314,35 @@
   box-shadow: var(--focus);
   outline: none;
 }
+
+
+.pie {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.78);
+}
+
+
+
+.avatar-contacto {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.avatar-contacto-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
